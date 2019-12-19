@@ -59,10 +59,10 @@ def intcode(memory, input_=0):
                 increm = 3
         elif opcode == "07":
             increm = 4
-            set_value(3, 1 if get_value(1, modes[0]) < get_value(2, modes[0]) else 0)
+            set_value(3, 1 if get_value(1, modes[0]) < get_value(2, modes[1]) else 0)
         elif opcode == "08":
             increm = 4
-            set_value(3, 1 if get_value(1, modes[0]) == get_value(2, modes[0]) else 0)
+            set_value(3, 1 if get_value(1, modes[0]) == get_value(2, modes[1]) else 0)
         elif opcode == "99":
             return IntCodeReturn(memory=memory, output=output)
         else:
@@ -109,6 +109,11 @@ assert intcode(
 assert intcode(
     memory=[3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], input_=10
 ).output == [1]
+test = util.read_input("test_05.csv")[0]
+test = [int(x) for x in test]
+assert intcode(test, input_=7).output == [999]
+assert intcode(test, input_=8).output == [1000]
+assert intcode(test, input_=9).output == [1001]
 print("Tests passed.")
 
 # Part 1.
@@ -130,5 +135,5 @@ util.print_solutions(part1_solution, part2_solution)
 
 # Regression tests.
 assert part1_solution == 2845163
-assert part2_solution == -1
+assert part2_solution == 9436229
 print("Regression tests passed.")
