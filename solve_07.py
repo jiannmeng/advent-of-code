@@ -3,16 +3,6 @@ import itertools
 import util
 
 
-phase_combinations = itertools.permutations(range(5))
-
-memory_a = [int(x) for x in util.read_input("test_07a.csv")[0]]
-memory_b = [int(x) for x in util.read_input("test_07b.csv")[0]]
-memory_c = [int(x) for x in util.read_input("test_07c.csv")[0]]
-memory_d = [int(x) for x in util.read_input("test_07d.csv")[0]]
-memory_e = [int(x) for x in util.read_input("test_07e.csv")[0]]
-memory = [int(x) for x in util.read_input("input_07.csv")[0]]
-
-
 class IntcodeComputer:
     POSITION = 0
     IMMEDIATE = 1
@@ -112,53 +102,60 @@ class IntcodeComputer:
             self.ptr += increm
 
 
-SINGLE_LOOP = 0
-FEEDBACK_LOOP = 1
-
-
 def run_amps(mode, memory):
-    if mode == SINGLE_LOOP:
-        phase_perms = itertools.permutations(range(5))  # [0,1,2,3,4]
-    elif mode == FEEDBACK_LOOP:
-        phase_perms = itertools.permutations(range(5, 10))  # [5,6,7,8,9]
+    if mode == "single":
+        phase_perms = itertools.permutations(range(5))  # [0,1,2,3,4] perms
+    elif mode == "feedback":
+        phase_perms = itertools.permutations(range(5, 10))  # [5,6,7,8,9] perms
     else:
-        raise ValueError("Invalid mode.")
+        raise ValueError("Invalid mode. Valid modes are 'single' and 'feedback'.")
 
-    outfinal = []
+    # Last signal sent by amplifier E to the thrusters. One for each phase permutation.
+    final_signals = []
 
-    # Repeat this for all possible permutations.
+    # Repeat for all possible permutations:
     for phase_seq in phase_perms:
         amps = []
-        outsignal = 0
+        signal = 0
 
         # Create amplifiers.
         for phase in phase_seq:
             amps.append(IntcodeComputer(memory, [phase]))
 
-        if mode == SINGLE_LOOP:
+        if mode == "single":
 
             for amp in amps:
-                amp.inp.append(outsignal)  # Receive signal from previous amp.
+                amp.inp.append(signal)  # Receive signal from previous amp.
                 amp.run(pause_on_output=False)  # Run the amp until it halts.
-                outsignal = amp.out[-1]  # Pass signal to the next amp.
-            outfinal.append(outsignal)  # We want the final amp's signal.
+                signal = amp.out[-1]  # Pass signal to the next amp.
+            final_signals.append(signal)  # We want the final amp's signal.
 
-        elif mode == FEEDBACK_LOOP:
+        if mode == "feedback":
 
             time_to_halt = False  # Stop when this turns True.
             i = 0  # Which amp to run; this goes 0, 1, 2, 3, 4, 0, 1, 2, 3, etc.
             while not time_to_halt:
-                amps[i].inp.append(outsignal)  # Receive signal from previous amp.
+                amps[i].inp.append(signal)  # Receive signal from previous amp.
                 amps[i].run(pause_on_output=True)  # Run the amp until an output occurs.
-                outsignal = amps[i].out[-1]  # Pass the signal to next amp.
+                signal = amps[i].out[-1]  # Pass the signal to next amp.
                 time_to_halt = amps[i].halt  # Halt all amps when one amp halts.
                 i = (i + 1) % 5  # Go to next amp.
-            outfinal.append(amps[4].out[-1])  # Once halted, we want final amp's signal.
 
-    return max(outfinal)
+            # Once halted, store final amp's signal.
+            final_signals.append(amps[4].out[-1])
+
+    return max(final_signals)
 
 
-print(run_amps(SINGLE_LOOP, memory_a))
-print(run_amps(FEEDBACK_LOOP, memory_d))
-print(run_amps(FEEDBACK_LOOP, memory_e))
-print(run_amps(FEEDBACK_LOOP, memory))
+memory_a = [int(x) for x in util.read_input("test_07a.csv")[0]]
+memory_b = [int(x) for x in util.read_input("test_07b.csv")[0]]
+memory_c = [int(x) for x in util.read_input("test_07c.csv")[0]]
+memory_d = [int(x) for x in util.read_input("test_07d.csv")[0]]
+memory_e = [int(x) for x in util.read_input("test_07e.csv")[0]]
+memory = [int(x) for x in util.read_input("input_07.csv")[0]]
+
+
+print(run_amps("single", memory_a))
+print(run_amps("feedback", memory_d))
+print(run_amps("feedback", memory_e))
+print(run_amps("feedback", memory))
