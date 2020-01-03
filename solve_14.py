@@ -3,6 +3,14 @@ from math import log, ceil
 
 
 class AlchemistWorkbench:
+    """Workbench object, tracking all crafting information.
+
+    Work backwords! Start from an output ingredient, figure out what inputs it needs,
+    and mark them for crafting. Use any spare ingredients already stored from a previous
+    craft. And then repeat for each ingredient marked for crafting, until only ORE is
+    left.
+    """
+
     def __init__(self, formulafile, fuelstart):
         # Read file.
         with open(formulafile) as f:
@@ -106,14 +114,14 @@ print(part1)
 fuel = 0
 exponent = ceil(log(ONE_TRILLION, 2))
 while exponent > -1:
-    fuel += 2 ** exponent  # candidate amount of fuel crafted.
-    wb = AlchemistWorkbench(filepath, fuelstart=fuel)
+    candidate = fuel + 2 ** exponent  # candidate amount of fuel crafted.
+    wb = AlchemistWorkbench(filepath, fuelstart=candidate)
     ore = wb.craft_all()  # number of ORE needed.
     if ore > ONE_TRILLION:
-        print("Over :", fuel, ore)
-        fuel -= 2 ** exponent
+        print("Over :", candidate, ore)
     else:
-        print("Under:", fuel, ore)
+        print("Under:", candidate, ore)
+        fuel = candidate
     exponent -= 1
 wb = AlchemistWorkbench(filepath, fuelstart=fuel)
 ore = wb.craft_all()  # number of ORE needed.
