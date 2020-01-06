@@ -1,4 +1,5 @@
 def intcode(memory):
+    memory = memory.copy()
     pointer = 0
     while True:
         instruction = memory[pointer]

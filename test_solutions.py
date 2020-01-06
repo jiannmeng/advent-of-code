@@ -1,21 +1,57 @@
-import solve_01
-import solve_02
-import solve_03
-import solve_04
-import solve_05
-import solve_06
-import solve_07
-import solve_08
-import solve_09
-import solve_10
+# Intcode test cases.
+d2tests = [
+    {"mem_before": [1, 0, 0, 0, 99], "mem_after": [2, 0, 0, 0, 99]},
+    {"mem_before": [2, 3, 0, 3, 99], "mem_after": [2, 3, 0, 6, 99]},
+    {"mem_before": [2, 4, 4, 5, 99, 0], "mem_after": [2, 4, 4, 5, 99, 9801]},
+    {
+        "mem_before": [1, 1, 1, 4, 99, 5, 6, 0, 99],
+        "mem_after": [30, 1, 1, 4, 2, 5, 6, 0, 99],
+    },
+]
 
-# import solve_11
-# import solve_12
-# import solve_13
-# import solve_14
+d5tests_mem = [
+    {"mem_before": [1002, 4, 3, 4, 33], "mem_after": [1002, 4, 3, 4, 99]},
+    {"mem_before": [1101, 100, -1, 4, 0], "mem_after": [1101, 100, -1, 4, 99,]},
+]
+
+d5tests_out = [
+    {"mem": [3, 0, 4, 0, 99], "inp": [12], "out": [12]},
+    {"mem": [3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], "inp": [8], "out": [1]},
+    {"mem": [3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], "inp": [9], "out": [0]},
+    {"mem": [3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], "inp": [7], "out": [1]},
+    {"mem": [3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], "inp": [8], "out": [0]},
+    {"mem": [3, 3, 1108, -1, 8, 3, 4, 3, 99], "inp": [8], "out": [1]},
+    {"mem": [3, 3, 1108, -1, 8, 3, 4, 3, 99], "inp": [9], "out": [0]},
+    {"mem": [3, 3, 1107, -1, 8, 3, 4, 3, 99], "inp": [7], "out": [1]},
+    {"mem": [3, 3, 1107, -1, 8, 3, 4, 3, 99], "inp": [8], "out": [0]},
+    {
+        "mem": [3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9],
+        "inp": [0],
+        "out": [0],
+    },
+    {
+        "mem": [3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9],
+        "inp": [10],
+        "out": [1],
+    },
+    {"mem": [3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], "inp": [0], "out": [0]},
+    {"mem": [3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], "inp": [10], "out": [1]},
+]
+
+with open("inputs/test_05.txt") as file:
+    d5tests_prog = file.read().split(",")
+    d5tests_prog = [int(x) for x in d5tests_prog]
+
+d5tests_large = [
+    {"inp": [7], "out": [999]},
+    {"inp": [8], "out": [1000]},
+    {"inp": [9], "out": [1001]},
+]
 
 
 def test_01():
+    import solve_01
+
     tests1 = [(12, 2), (14, 2), (1969, 654), (100756, 33583)]
     tests2 = [(14, 2), (1969, 966), (100756, 50346)]
     for t in tests1:
@@ -28,20 +64,18 @@ def test_01():
 
 
 def test_02():
-    tests = [
-        ([1, 0, 0, 0, 99], [2, 0, 0, 0, 99]),
-        ([2, 3, 0, 3, 99], [2, 3, 0, 6, 99]),
-        ([2, 4, 4, 5, 99, 0], [2, 4, 4, 5, 99, 9801]),
-        ([1, 1, 1, 4, 99, 5, 6, 0, 99], [30, 1, 1, 4, 2, 5, 6, 0, 99]),
-    ]
-    for t in tests:
-        assert solve_02.intcode(t[0]) == t[1]
+    import solve_02
+
+    for x in d2tests:
+        assert solve_02.intcode(x["mem_before"]) == x["mem_after"]
 
     assert solve_02.part1 == 5098658
     assert solve_02.part2 == 5064
 
 
 def test_03():
+    import solve_03
+
     assert solve_03.manhattan_dist((0, 0)) == 0
     assert solve_03.manhattan_dist((-3, 8)) == 11
     assert solve_03.manhattan_dist((-1, -2), (3, 4)) == 10
@@ -51,6 +85,8 @@ def test_03():
 
 
 def test_04():
+    import solve_04
+
     assert solve_04.is_valid_1(111111)
     assert not solve_04.is_valid_1(223450)
     assert not solve_04.is_valid_1(123789)
@@ -63,61 +99,33 @@ def test_04():
 
 
 def test_05():
+    import solve_05
     from solve_05 import intcode
 
     # Tests from Day 2.
-    d2tests = [
-        ([1, 0, 0, 0, 99], [2, 0, 0, 0, 99]),
-        ([2, 3, 0, 3, 99], [2, 3, 0, 6, 99]),
-        ([2, 4, 4, 5, 99, 0], [2, 4, 4, 5, 99, 9801]),
-        ([1, 1, 1, 4, 99, 5, 6, 0, 99], [30, 1, 1, 4, 2, 5, 6, 0, 99]),
-    ]
-    for t in d2tests:
-        assert intcode(memory=t[0]).memory == t[1]
+    for x in d2tests:
+        assert intcode(memory=x["mem_before"]).memory == x["mem_after"]
 
     # Tests from Day 5.
     ## Memory checks.
-    ## (memory_before, memory_after)
-    d5tests_mem = [
-        ([1002, 4, 3, 4, 33], [1002, 4, 3, 4, 99]),
-        ([1101, 100, -1, 4, 0], [1101, 100, -1, 4, 99,]),
-    ]
-    for t in d5tests_mem:
-        assert intcode(memory=t[0]).memory == t[1]
+    for x in d5tests_mem:
+        assert intcode(memory=x["mem_before"]).memory == x["mem_after"]
 
     ## Output checks.
-    ## (memory, input, output)
-    d5tests_out = [
-        ([3, 0, 4, 0, 99], 12, [12]),
-        ([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 8, [1]),
-        ([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], 9, [0]),
-        ([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], 7, [1]),
-        ([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], 8, [0]),
-        ([3, 3, 1108, -1, 8, 3, 4, 3, 99], 8, [1]),
-        ([3, 3, 1108, -1, 8, 3, 4, 3, 99], 9, [0]),
-        ([3, 3, 1107, -1, 8, 3, 4, 3, 99], 7, [1]),
-        ([3, 3, 1107, -1, 8, 3, 4, 3, 99], 8, [0]),
-        ([3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9], 0, [0]),
-        ([3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9], 10, [1]),
-        ([3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], 0, [0]),
-        ([3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], 10, [1]),
-    ]
-    for t in d5tests_out:
-        assert intcode(memory=t[0], input_=t[1]).output == t[2]
+    for x in d5tests_out:
+        assert intcode(memory=x["mem"], input_=x["inp"][0]).output == x["out"]
 
     ## "Larger example" test.
-    with open("inputs/test_05.txt") as file:
-        test_prog = file.read().split(",")
-        test_prog = [int(x) for x in test_prog]
-    assert intcode(test_prog, input_=7).output == [999]
-    assert intcode(test_prog, input_=8).output == [1000]
-    assert intcode(test_prog, input_=9).output == [1001]
+    for x in d5tests_large:
+        assert intcode(memory=d5tests_prog, input_=x["inp"][0]).output == x["out"]
 
     assert solve_05.part1 == 2845163
     assert solve_05.part2 == 9436229
 
 
 def test_06():
+    import solve_06
+
     with open("inputs/test_06.txt") as file:
         test_orbits = [x.strip() for x in file.readlines()]
     assert solve_06.calc_orbits(test_orbits) == 42
@@ -127,6 +135,8 @@ def test_06():
 
 
 def test_07():
+    import solve_07
+
     memory = dict()
     for letter in ["a", "b", "c", "d", "e"]:
         with open(f"inputs/test_07{letter}.txt") as file:
@@ -145,6 +155,8 @@ def test_07():
 
 
 def test_08():
+    import solve_08
+
     assert solve_08.part1 == 1548
     assert solve_08.part2 == [
         " ##  #### #  # #  #  ##  ",
@@ -157,65 +169,36 @@ def test_08():
 
 
 def test_09():
+    import solve_09
     from solve_09 import IntcodeComputer
 
     # Tests from Day 2.
-    d2tests = [
-        ([1, 0, 0, 0, 99], [2, 0, 0, 0, 99]),
-        ([2, 3, 0, 3, 99], [2, 3, 0, 6, 99]),
-        ([2, 4, 4, 5, 99, 0], [2, 4, 4, 5, 99, 9801]),
-        ([1, 1, 1, 4, 99, 5, 6, 0, 99], [30, 1, 1, 4, 2, 5, 6, 0, 99]),
-    ]
-    for t in d2tests:
-        itc = IntcodeComputer(mem=t[0], inp=[]).run()
-        assert itc.mem == t[1]
+    for x in d2tests:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
 
     # Tests from Day 5.
     ## Memory checks.
-    ## (memory_before, memory_after)
-    d5tests_mem = [
-        ([1002, 4, 3, 4, 33], [1002, 4, 3, 4, 99]),
-        ([1101, 100, -1, 4, 0], [1101, 100, -1, 4, 99,]),
-    ]
-    for t in d5tests_mem:
-        itc = IntcodeComputer(mem=t[0], inp=[]).run()
-        assert itc.mem == t[1]
+    for x in d5tests_mem:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
 
     ## Output checks.
-    ## (memory, input, output)
-    d5tests_out = [
-        ([3, 0, 4, 0, 99], [12], [12]),
-        ([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], [8], [1]),
-        ([3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], [9], [0]),
-        ([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], [7], [1]),
-        ([3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], [8], [0]),
-        ([3, 3, 1108, -1, 8, 3, 4, 3, 99], [8], [1]),
-        ([3, 3, 1108, -1, 8, 3, 4, 3, 99], [9], [0]),
-        ([3, 3, 1107, -1, 8, 3, 4, 3, 99], [7], [1]),
-        ([3, 3, 1107, -1, 8, 3, 4, 3, 99], [8], [0]),
-        ([3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9], [0], [0]),
-        ([3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9], [10], [1]),
-        ([3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], [0], [0]),
-        ([3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], [10], [1]),
-    ]
-    for t in d5tests_out:
-        itc = IntcodeComputer(mem=t[0], inp=t[1]).run()
-        assert itc.out == t[2]
+    for x in d5tests_out:
+        itc = IntcodeComputer(mem=x["mem"], inp=x["inp"]).run()
+        assert itc.out == x["out"]
 
     ## "Larger example" test.
-    with open("inputs/test_05.txt") as file:
-        test_prog = file.read().split(",")
-        test_prog = [int(x) for x in test_prog]
-    ## (input, output)
-    d5tests_large = [([7], [999]), ([8], [1000]), ([9], [1001])]
-    for t in d5tests_large:
-        itc = IntcodeComputer(mem=test_prog, inp=t[0]).run()
-        assert itc.out == t[1]
+    for x in d5tests_large:
+        itc = IntcodeComputer(mem=d5tests_prog, inp=x["inp"]).run()
+        assert itc.out == x["out"]
 
     assert solve_09.part1 == 3906448201
     assert solve_09.part2 == 59785
 
 
 def test_10():
+    import solve_10
+
     assert solve_10.part1 == 269
     assert solve_10.part2 == 612

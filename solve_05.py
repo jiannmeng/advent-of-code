@@ -4,6 +4,7 @@ IntCodeReturn = collections.namedtuple("IntCodeReturn", "memory output")
 
 
 def intcode(memory, input_=0):
+    memory = memory.copy()
     pointer = 0
     output = []
 
