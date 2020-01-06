@@ -1,7 +1,6 @@
 import collections
-import util
 
-IntCodeReturn = collections.namedtuple("IntCode", "memory output")
+IntCodeReturn = collections.namedtuple("IntCodeReturn", "memory output")
 
 
 def intcode(memory, input_=0):
@@ -73,67 +72,20 @@ def intcode(memory, input_=0):
     return IntCodeReturn(memory=memory, output=output)
 
 
-# Test cases.
-## Day 2 tests:
-tests = [
-    ([1, 0, 0, 0, 99], [2, 0, 0, 0, 99]),
-    ([2, 3, 0, 3, 99], [2, 3, 0, 6, 99]),
-    ([2, 4, 4, 5, 99, 0], [2, 4, 4, 5, 99, 9801]),
-    ([1, 1, 1, 4, 99, 5, 6, 0, 99], [30, 1, 1, 4, 2, 5, 6, 0, 99]),
-]
-for t in tests:
-    assert intcode(memory=t[0]).memory == t[1]
-## Memory checks.
-assert intcode(memory=[1002, 4, 3, 4, 33]).memory == [1002, 4, 3, 4, 99]
-assert intcode(memory=[1101, 100, -1, 4, 0]).memory == [1101, 100, -1, 4, 99]
-## Output checks.
-assert intcode(memory=[3, 0, 4, 0, 99], input_=12).output == [12]
-## Part 2 checks.
-assert intcode(memory=[3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], input_=8).output == [1]
-assert intcode(memory=[3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8], input_=9).output == [0]
-assert intcode(memory=[3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], input_=7).output == [1]
-assert intcode(memory=[3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8], input_=8).output == [0]
-assert intcode(memory=[3, 3, 1108, -1, 8, 3, 4, 3, 99], input_=8).output == [1]
-assert intcode(memory=[3, 3, 1108, -1, 8, 3, 4, 3, 99], input_=9).output == [0]
-assert intcode(memory=[3, 3, 1107, -1, 8, 3, 4, 3, 99], input_=7).output == [1]
-assert intcode(memory=[3, 3, 1107, -1, 8, 3, 4, 3, 99], input_=8).output == [0]
-assert intcode(
-    memory=[3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9], input_=0
-).output == [0]
-assert intcode(
-    memory=[3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9], input_=10
-).output == [1]
-assert intcode(
-    memory=[3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], input_=0
-).output == [0]
-assert intcode(
-    memory=[3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1], input_=10
-).output == [1]
-test = util.read_input("test_05.csv")[0]
-test = [int(x) for x in test]
-assert intcode(test, input_=7).output == [999]
-assert intcode(test, input_=8).output == [1000]
-assert intcode(test, input_=9).output == [1001]
-print("Tests passed.")
-
-# Part 1.
-puzzle_input = util.read_input("input_05.csv")[0]
-puzzle_input = [int(x) for x in puzzle_input]
+# PART 1.
+with open("inputs/input_05.txt") as file:
+    puzzle_input = file.read().split(",")
+    puzzle_input = [int(x) for x in puzzle_input]
 part1_output = intcode(memory=puzzle_input.copy(), input_=1).output
 ## Diagnostics: all values should be 0 except last output.
 assert all([x == 0] for x in part1_output[1:-1])
 ## Solution is the last output.
-part1_solution = part1_output[-1]
+part1 = part1_output[-1]
 
-# Part 2.
+# PART 2.
 part2 = intcode(memory=puzzle_input.copy(), input_=5)
-print(part2)
-part2_solution = part2.output[0]
+part2 = part2.output[0]
 
-
-util.print_solutions(part1_solution, part2_solution)
-
-# Regression tests.
-assert part1_solution == 2845163
-assert part2_solution == 9436229
-print("Regression tests passed.")
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")
