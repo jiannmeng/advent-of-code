@@ -3,9 +3,9 @@ import solve_02
 import solve_03
 import solve_04
 import solve_05
+import solve_06
+import solve_07
 
-# import solve_06
-# import solve_07
 # import solve_08
 # import solve_09
 # import solve_10
@@ -133,3 +133,30 @@ def test_05():
 
     assert solve_05.part1 == 2845163
     assert solve_05.part2 == 9436229
+
+
+def test_06():
+    with open("inputs/test_06.txt") as file:
+        test_orbits = [x.strip() for x in file.readlines()]
+    assert solve_06.calc_orbits(test_orbits) == 42
+
+    assert solve_06.part1 == 253104
+    assert solve_06.part2 == 499
+
+
+def test_07():
+    memory = dict()
+    for letter in ["a", "b", "c", "d", "e"]:
+        with open(f"inputs/test_07{letter}.txt") as file:
+            memory[letter] = [int(x.strip()) for x in file.read().split(",")]
+
+    single_test = {"a": 43210, "b": 54321, "c": 65210}
+    for letter in single_test:
+        assert solve_07.run_amps("single", memory[letter]) == single_test[letter]
+
+    feedback_test = {"d": 139629729, "e": 18216}
+    for letter in feedback_test:
+        assert solve_07.run_amps("feedback", memory[letter]) == feedback_test[letter]
+
+    assert solve_07.part1 == 422858
+    assert solve_07.part2 == 14897241

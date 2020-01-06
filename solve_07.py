@@ -1,6 +1,5 @@
 import collections
 import itertools
-import util
 
 
 class IntcodeComputer:
@@ -147,15 +146,15 @@ def run_amps(mode, memory):
     return max(final_signals)
 
 
-memory_a = [int(x) for x in util.read_input("test_07a.csv")[0]]
-memory_b = [int(x) for x in util.read_input("test_07b.csv")[0]]
-memory_c = [int(x) for x in util.read_input("test_07c.csv")[0]]
-memory_d = [int(x) for x in util.read_input("test_07d.csv")[0]]
-memory_e = [int(x) for x in util.read_input("test_07e.csv")[0]]
-memory = [int(x) for x in util.read_input("input_07.csv")[0]]
+with open("inputs/input_07.txt") as file:
+    memory = [int(x.strip()) for x in file.read().split(",")]
 
+# PART 1.
+part1 = run_amps("single", memory)
 
-print(run_amps("single", memory_a))
-print(run_amps("feedback", memory_d))
-print(run_amps("feedback", memory_e))
-print(run_amps("feedback", memory))
+# PART 2.
+part2 = run_amps("feedback", memory)
+
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")
