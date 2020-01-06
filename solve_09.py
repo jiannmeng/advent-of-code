@@ -3,7 +3,9 @@ class IntcodeComputer:
     IMMEDIATE = 1
     RELATIVE = 2
 
-    def __init__(self, mem, inp, memsize=1000):
+    def __init__(self, mem, inp, memsize=None):
+        if memsize is None:
+            memsize = len(mem)
         self.mem = mem.copy()  # memory
         if len(self.mem) < memsize:
             for _ in range(memsize - len(self.mem)):
@@ -116,12 +118,19 @@ class IntcodeComputer:
                 )
 
 
-with open("input_09.csv") as file:
+with open("inputs/input_09.txt") as file:
     program = [int(x) for x in file.readline().split(",")]
-print(program)
-i = IntcodeComputer(program, [1], memsize=10000)
-i.run(debug=True)
 
-j = IntcodeComputer(program, [2], memsize=10000)
-j.run()
-print(j.out)
+# PART 1.
+itc1 = IntcodeComputer(program, [1], memsize=10000)
+itc1.run()
+part1 = itc1.out[0]
+
+# PART 2.
+itc2 = IntcodeComputer(program, [2], memsize=10000)
+itc2.run()
+part2 = itc2.out[0]
+
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")

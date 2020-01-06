@@ -89,7 +89,6 @@ for base in product(range(m.width), range(m.height)):
         pass
 station = max(detected, key=detected.get)
 part1 = detected[station]
-print(f"Part 1: {part1}, at coordinates {station}.")
 
 # PART 2.
 
@@ -114,4 +113,7 @@ while len(burn_targets) > 0:
     burn_targets.remove((burn_coords, burn_angle))
 x, y = burn_order[199]
 part2 = 100 * x + y
-print(f"Part 2: {part2}, i.e. coordinates {x}, {y}.")
+
+if __name__ == "__main__":
+    print(f"Part 1: {part1}, at coordinates {station}.")
+    print(f"Part 2: {part2}, i.e. coordinates {x}, {y}.")
