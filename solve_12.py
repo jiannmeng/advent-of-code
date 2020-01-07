@@ -1,6 +1,6 @@
-from collections import namedtuple
+from functools import reduce
 from itertools import combinations
-from copy import deepcopy
+from math import gcd
 
 
 class Vector3:
@@ -76,17 +76,8 @@ class System:
         if self.debug:
             print(self)
 
-    def __str__(self):
-        output = f"After {self.step} steps:"
-        for m in self.moons:
-            output += f"\n{m}"
-        return output
-
     def energy(self):
         return sum([m.total_energy() for m in self.moons])
-
-    def __eq__(self, other):
-        return all(a == b for a, b in zip(self.moons, other.moons))
 
     def state(self):
         return (
@@ -94,6 +85,15 @@ class System:
             tuple((m.position.y, m.velocity.y) for m in self.moons),
             tuple((m.position.z, m.velocity.z) for m in self.moons),
         )
+
+    def __str__(self):
+        output = f"After {self.step} steps:"
+        for m in self.moons:
+            output += f"\n{m}"
+        return output
+
+    def __eq__(self, other):
+        return all(a == b for a, b in zip(self.moons, other.moons))
 
 
 def parse_vec(vecstr):
@@ -105,33 +105,38 @@ def parse_vec(vecstr):
     return Vector3(x, y, z)
 
 
-with open("input_12.csv") as file:
+def lcm(a, b):
+    """Lowest common multiple."""
+    return int(a * b / gcd(a, b))
+
+
+def lcms(*numbers):
+    """Lowest common multiple of more than 2 numbers."""
+    return reduce(lcm, numbers)
+
+
+with open("inputs/input_12.txt") as file:
     moons = [m.strip() for m in file.readlines()]
 
+# PART 1.
 moons = list(map(parse_vec, moons))
 moons = list(map(Moon, moons))
 jupiter = System(moons)
 for _ in range(1000):
     jupiter.apply_gravity()
     jupiter.tick()
-print(jupiter)
-print(jupiter.energy())
-print(jupiter.state())
+part1 = jupiter.energy()
 
-# Reset
-jupiter = System(moons)
+# PART 2.
+jupiter = System(moons)  # reset system
 history = {"x": set(), "y": set(), "z": set()}
 period = [None, None, None]
 while True:
-    if jupiter.step % 1_000 == 0:
-        print(jupiter.step)
-        print(len(history["x"]))
     state = jupiter.state()
     for i, axis in enumerate("xyz"):
         if period[i] is None:
             if state[i] in history[axis]:
                 period[i] = jupiter.step
-                print(f"period {axis} found: {jupiter.step}")
                 del history[axis]
             else:
                 history[axis].add(state[i])
@@ -139,18 +144,8 @@ while True:
         break
     jupiter.apply_gravity()
     jupiter.tick()
+part2 = lcms(*period)
 
-from functools import reduce
-from math import gcd
-
-
-def lcm(a, b):
-    return int(a * b / gcd(a, b))
-
-
-def lcms(*numbers):
-    return reduce(lcm, numbers)
-
-
-print(period)
-print(lcms(*period))
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")

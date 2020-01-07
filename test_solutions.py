@@ -11,7 +11,7 @@ d2tests = [
 
 d5tests_mem = [
     {"mem_before": [1002, 4, 3, 4, 33], "mem_after": [1002, 4, 3, 4, 99]},
-    {"mem_before": [1101, 100, -1, 4, 0], "mem_after": [1101, 100, -1, 4, 99,]},
+    {"mem_before": [1101, 100, -1, 4, 0], "mem_after": [1101, 100, -1, 4, 99]},
 ]
 
 d5tests_out = [
@@ -47,6 +47,12 @@ d5tests_large = [
     {"inp": [8], "out": [1000]},
     {"inp": [9], "out": [1001]},
 ]
+
+d9tests_prog = {
+    "a": [109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99],
+    "b": [1102, 34915192, 34915192, 7, 4, 7, 99, 0],
+    "c": [104, 1125899906842624, 99],
+}
 
 
 def test_01():
@@ -107,15 +113,15 @@ def test_05():
         assert intcode(memory=x["mem_before"]).memory == x["mem_after"]
 
     # Tests from Day 5.
-    ## Memory checks.
+    # Memory checks.
     for x in d5tests_mem:
         assert intcode(memory=x["mem_before"]).memory == x["mem_after"]
 
-    ## Output checks.
+    # Output checks.
     for x in d5tests_out:
         assert intcode(memory=x["mem"], input_=x["inp"][0]).output == x["out"]
 
-    ## "Larger example" test.
+    # "Larger example" test.
     for x in d5tests_large:
         assert intcode(memory=d5tests_prog, input_=x["inp"][0]).output == x["out"]
 
@@ -178,20 +184,29 @@ def test_09():
         assert itc.mem == x["mem_after"]
 
     # Tests from Day 5.
-    ## Memory checks.
+    # Memory checks.
     for x in d5tests_mem:
         itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
         assert itc.mem == x["mem_after"]
 
-    ## Output checks.
+    # Output checks.
     for x in d5tests_out:
         itc = IntcodeComputer(mem=x["mem"], inp=x["inp"]).run()
         assert itc.out == x["out"]
 
-    ## "Larger example" test.
+    # "Larger example" test.
     for x in d5tests_large:
         itc = IntcodeComputer(mem=d5tests_prog, inp=x["inp"]).run()
         assert itc.out == x["out"]
+
+    # Tests from Day 9.
+    itcs = {
+        letter: IntcodeComputer(mem=d9tests_prog[letter], inp=[], memsize=1000).run()
+        for letter in d9tests_prog
+    }
+    assert itcs["a"].out == d9tests_prog["a"]  # returns it's own program.
+    assert len(str(itcs["b"].out[0])) == 16  # 16-digit output
+    assert itcs["c"].out[0] == d9tests_prog["c"][1]  # outputs middle number
 
     assert solve_09.part1 == 3906448201
     assert solve_09.part2 == 59785
@@ -202,3 +217,105 @@ def test_10():
 
     assert solve_10.part1 == 269
     assert solve_10.part2 == 612
+
+
+def test_11():
+    import solve_11
+    from solve_11 import IntcodeComputer
+
+    # Tests from Day 2.
+    for x in d2tests:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
+
+    # Tests from Day 5.
+    # Memory checks.
+    for x in d5tests_mem:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
+
+    # Output checks.
+    for x in d5tests_out:
+        itc = IntcodeComputer(mem=x["mem"], inp=x["inp"]).run()
+        assert itc.out == x["out"]
+
+    # "Larger example" test.
+    for x in d5tests_large:
+        itc = IntcodeComputer(mem=d5tests_prog, inp=x["inp"]).run()
+        assert itc.out == x["out"]
+
+    # Tests from Day 9.
+    itcs = {
+        letter: IntcodeComputer(mem=d9tests_prog[letter], inp=[], memsize=1000).run()
+        for letter in d9tests_prog
+    }
+    assert itcs["a"].out == d9tests_prog["a"]  # returns it's own program.
+    assert len(str(itcs["b"].out[0])) == 16  # 16-digit output
+    assert itcs["c"].out[0] == d9tests_prog["c"][1]  # outputs middle number
+
+    assert solve_11.part1 == 2322
+    assert solve_11.part2 == "JHARBGCU"
+
+
+def test_12():
+    import solve_12
+
+    assert solve_12.part1 == 8044
+    assert solve_12.part2 == 362375881472136
+
+
+def test_13():
+    import solve_13
+    from solve_13 import IntcodeComputer
+
+    # Tests from Day 2.
+    for x in d2tests:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
+
+    # Tests from Day 5.
+    # Memory checks.
+    for x in d5tests_mem:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
+
+    # Output checks.
+    for x in d5tests_out:
+        itc = IntcodeComputer(mem=x["mem"], inp=x["inp"]).run()
+        assert itc.out == x["out"]
+
+    # "Larger example" test.
+    for x in d5tests_large:
+        itc = IntcodeComputer(mem=d5tests_prog, inp=x["inp"]).run()
+        assert itc.out == x["out"]
+
+    # Tests from Day 9.
+    itcs = {
+        letter: IntcodeComputer(mem=d9tests_prog[letter], inp=[], memsize=1000).run()
+        for letter in d9tests_prog
+    }
+    assert itcs["a"].out == d9tests_prog["a"]  # returns it's own program.
+    assert len(str(itcs["b"].out[0])) == 16  # 16-digit output
+    assert itcs["c"].out[0] == d9tests_prog["c"][1]  # outputs middle number
+
+    assert solve_13.part1 == 242
+    assert solve_13.part2 == 11641
+
+
+def test_14():
+    import solve_14
+    from solve_14 import AlchemistWorkbench, binary_search_ore, ONE_TRILLION
+
+    test_part1 = [("a", 31), ("b", 165), ("c", 13312), ("d", 180697), ("e", 2210736)]
+    for t in test_part1:
+        filepath = f"inputs/test_14{t[0]}.txt"
+        wb = AlchemistWorkbench(filepath, fuelstart=1)
+        assert wb.craft_all() == t[1]
+
+    test_part2 = [("c", 82892753), ("d", 5586022), ("e", 460664)]
+    for t in test_part2:
+        filepath = f"inputs/test_14{t[0]}.txt"
+        assert binary_search_ore(filepath, ONE_TRILLION) == t[1]
+
+    assert solve_14.part1 == 248794
+    assert solve_14.part2 == 4906796

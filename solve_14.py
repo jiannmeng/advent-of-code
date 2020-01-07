@@ -37,7 +37,8 @@ class AlchemistWorkbench:
         self.tocraft["FUEL"] = fuelstart
 
     def __repr__(self):
-        tmp = f"spare: {dict(self.spare)}, tocraft: {dict(self.tocraft)}, crafted: {dict(self.crafted)}"
+        tmp = f"spare: {dict(self.spare)}, tocraft: {dict(self.tocraft)}, "
+        f"crafted: {dict(self.crafted)}"
         return tmp
 
     def _find_key(self, ingredient):
@@ -55,7 +56,7 @@ class AlchemistWorkbench:
         tmp = [k for k, v in self.tocraft.items() if v > 0 and k != "ORE"]
         try:
             return tmp[0]
-        except:
+        except Exception:
             raise ValueError("No non-ore in tocraft!")
 
     def craft(self, ingredient):
@@ -96,35 +97,48 @@ class AlchemistWorkbench:
         """Craft until only ORE remains in self.tocraft. Return that amount of ORE."""
         while not self._only_ore():
             ing = self._pick_non_ore()
-            wb.craft(ing)
-        return wb.tocraft["ORE"]
+            self.craft(ing)
+        return self.tocraft["ORE"]
+
+
+def binary_search_ore(filepath, max_ore, debug=False):
+    """Use powers of 2 to find the right amount of fuel such that total ORE used is just
+    under one trillion."""
+    fuel = 0
+    exponent = ceil(log(max_ore, 2))
+
+    while exponent > -1:
+        candidate = fuel + 2 ** exponent  # candidate amount of fuel crafted.
+        wb = AlchemistWorkbench(filepath, fuelstart=candidate)
+        ore = wb.craft_all()  # number of ORE needed.
+        if ore > ONE_TRILLION:
+            if debug:
+                print("Over :", candidate, ore)
+        else:
+            fuel = candidate
+            if debug:
+                print("Under:", candidate, ore)
+        exponent -= 1
+
+    # Now we know `fuel` is the correct amount. Final craft for debug purposes.
+    if debug:
+        wb = AlchemistWorkbench(filepath, fuelstart=fuel)
+        ore = wb.craft_all()
+        print("FINAL:", fuel, ore)
+
+    return fuel
 
 
 filepath = "inputs/input_14.txt"
 ONE_TRILLION = 1_000_000_000_000
 
-# Part 1.
-wb = AlchemistWorkbench(filepath, fuelstart=1)
-part1 = wb.craft_all()
-print(part1)
+# PART 1.
+wb1 = AlchemistWorkbench(filepath, fuelstart=1)
+part1 = wb1.craft_all()
 
-# Part 2.
-# Use powers of 2 to find the right amount of fuel such that total ORE used is just
-# under one trillion.
-fuel = 0
-exponent = ceil(log(ONE_TRILLION, 2))
-while exponent > -1:
-    candidate = fuel + 2 ** exponent  # candidate amount of fuel crafted.
-    wb = AlchemistWorkbench(filepath, fuelstart=candidate)
-    ore = wb.craft_all()  # number of ORE needed.
-    if ore > ONE_TRILLION:
-        print("Over :", candidate, ore)
-    else:
-        print("Under:", candidate, ore)
-        fuel = candidate
-    exponent -= 1
-wb = AlchemistWorkbench(filepath, fuelstart=fuel)
-ore = wb.craft_all()  # number of ORE needed.
-print("FINAL:", fuel, ore)
-part2 = fuel
-print(part2)
+# PART 2.
+part2 = binary_search_ore(filepath, ONE_TRILLION)
+
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")

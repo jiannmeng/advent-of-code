@@ -6,7 +6,9 @@ class IntcodeComputer:
     IMMEDIATE = 1
     RELATIVE = 2
 
-    def __init__(self, mem, inp, memsize=1000):
+    def __init__(self, mem, inp, memsize=None):
+        if memsize is None:
+            memsize = len(mem)
         self.mem = mem.copy()  # memory
         if len(self.mem) < memsize:
             for _ in range(memsize - len(self.mem)):
@@ -129,7 +131,9 @@ class IntcodeComputer:
             if debug:
                 print(debug_str + f"Output: {self.out}")
 
-            if self.halt or output_counter >= outputs:
+            if not self.halt and outputs == 0:
+                pass
+            elif self.halt or output_counter >= outputs:
                 return self
 
 
@@ -169,19 +173,36 @@ class Grid:
         range_y = range(min(all_y), max(all_y) + 1)
 
         all_coords = [(x, y) for y in range_y for x in range_x]
-        for y in range_y:
+        result = ""
+        for y in reversed(range_y):  # draw top to bottom
             line = ""
             for x in range_x:
                 if self.colours.get((x, y), 0) == 0:
-                    line += "."
+                    line += " "
                 else:
                     line += "#"
-            print(line)
+            result += line + "\n"
+
+        return result[:-1]  # remove last newline char.
 
 
-with open("input_11.csv") as file:
+with open("inputs/input_11.txt") as file:
     program = [int(x) for x in file.read().split(",")]
+# PART 1.
+computer = IntcodeComputer(mem=program, inp=[0], memsize=10000)
+grid = Grid()
 
+while not computer.halt:
+    computer.run(outputs=2)
+    grid.colours[grid.position] = computer.out[-2]
+    grid.turn(computer.out[-1])
+    grid.move()
+    computer.append_input([grid.colours.get(grid.position, 0)])
+
+# print(grid.paint()) # uncomment to see the painted tiles.
+part1 = len(grid.colours)
+
+# PART 2.
 computer = IntcodeComputer(mem=program, inp=[1], memsize=10000)
 grid = Grid()
 
@@ -192,7 +213,9 @@ while not computer.halt:
     grid.move()
     computer.append_input([grid.colours.get(grid.position, 0)])
 
-print(len(grid.colours))
-print(grid.colours)
+print(grid.paint())  #  uncomment to see the painted tiles
+part2 = "JHARBGCU"
 
-grid.paint()
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")

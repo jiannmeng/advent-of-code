@@ -3,7 +3,9 @@ class IntcodeComputer:
     IMMEDIATE = 1
     RELATIVE = 2
 
-    def __init__(self, mem, inp, memsize=1000):
+    def __init__(self, mem, inp, memsize=None):
+        if memsize is None:
+            memsize = len(mem)
         self.mem = mem.copy()  # memory
         if len(self.mem) < memsize:
             for _ in range(memsize - len(self.mem)):
@@ -171,23 +173,26 @@ class Game:
             self.points[coord] = point
 
     def ball_x(self):
+        """Return x-coord of the ball."""
         try:
             return [k[0] for k, v in self.points.items() if v == BALL][0]
-        except:
+        except KeyError:
             return 0
 
     def paddle_x(self):
+        """Return x-coord of the paddle."""
         try:
             return [k[0] for k, v in self.points.items() if v == HORIZONTAL_PADDLE][0]
-        except:
+        except KeyError:
             return 0
 
     def count_blocks(self):
+        """Count number of blocks in the game."""
         return len([x for _, x in self.points.items() if x == BLOCK])
 
     def __str__(self):
         range_x, range_y = self.coord_range()
-        display = "START\n"
+        display = ""
         for y in range_y:
             for x in range_x:
                 tile = self.points.get((x, y), EMPTY)
@@ -202,19 +207,33 @@ class Game:
                 elif tile == BALL:
                     display += "O"
             display += "\n"
-        # display += "END"
         display += f"Score: {self.score}"
         return display
 
 
-with open("input_13.csv") as file:
+with open("inputs/input_13.txt") as file:
     program = [int(x) for x in file.read().split(",")]
 
+# PART 1.
+computer = IntcodeComputer(mem=program, inp=[], memsize=10000)
+grid = Game()
+
+while True:
+    computer.run(3)
+    grid.add_or_update_point(
+        coord=(computer.out[-3], computer.out[-2]), point=computer.out[-1]
+    )
+    if computer.halt:
+        break
+
+part1 = grid.count_blocks()
+
+# PART 2.
 program[0] = 2
 computer = IntcodeComputer(mem=program, inp=[], memsize=10000)
-
 grid = Game()
 frame = 0
+
 while True:
     computer.run(3)
     grid.add_or_update_point(
@@ -222,7 +241,8 @@ while True:
     )
     if computer.need_input:
         frame += 1
-        # print(grid)
+        # print(grid)  # uncomment to view grid.
+        # input("Press ENTER to continue...")  # uncomment to pause at each frame.
 
         computer.append_input(
             [
@@ -233,16 +253,17 @@ while True:
                 else 0
             ]
         )
-        # print(computer.inp)
-        # input()
 
     if grid.count_blocks() == 0 and computer.step > 10_000:
-        computer.run(3)  # Run one more step to update score!
+        # Run one more step to update score!
+        computer.run(3)
+        grid.add_or_update_point(
+            coord=(computer.out[-3], computer.out[-2]), point=computer.out[-1]
+        )
         break
 
-# print(grid.points)
-# print(grid.coord_range())
-# print(grid)
-# print(len([x for _, x in grid.points.items() if x == BLOCK]))
-print(grid)
-print(computer.out[-20:])
+part2 = grid.score
+
+if __name__ == "__main__":
+    print(f"Part 1: {part1}.")
+    print(f"Part 2: {part2}.")
