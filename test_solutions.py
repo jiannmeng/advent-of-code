@@ -319,3 +319,10 @@ def test_14():
 
     assert solve_14.part1 == 248794
     assert solve_14.part2 == 4906796
+
+
+def test_22():
+    import solve_22
+
+    assert solve_22.part1 == 3377
+    assert solve_22.part2 == 29988879027217
