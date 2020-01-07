@@ -321,6 +321,44 @@ def test_14():
     assert solve_14.part2 == 4906796
 
 
+def test_15():
+    import solve_15
+    from solve_15 import IntcodeComputer
+
+    # Tests from Day 2.
+    for x in d2tests:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
+
+    # Tests from Day 5.
+    # Memory checks.
+    for x in d5tests_mem:
+        itc = IntcodeComputer(mem=x["mem_before"], inp=[]).run()
+        assert itc.mem == x["mem_after"]
+
+    # Output checks.
+    for x in d5tests_out:
+        itc = IntcodeComputer(mem=x["mem"], inp=x["inp"]).run()
+        assert itc.out == x["out"]
+
+    # "Larger example" test.
+    for x in d5tests_large:
+        itc = IntcodeComputer(mem=d5tests_prog, inp=x["inp"]).run()
+        assert itc.out == x["out"]
+
+    # Tests from Day 9.
+    itcs = {
+        letter: IntcodeComputer(mem=d9tests_prog[letter], inp=[], memsize=1000).run()
+        for letter in d9tests_prog
+    }
+    assert itcs["a"].out == d9tests_prog["a"]  # returns it's own program.
+    assert len(str(itcs["b"].out[0])) == 16  # 16-digit output
+    assert itcs["c"].out[0] == d9tests_prog["c"][1]  # outputs middle number
+
+    assert solve_15.part1 == 380
+    assert solve_15.part2 == 410
+
+
 def test_22():
     import solve_22
 
