@@ -359,6 +359,15 @@ def test_15():
     assert solve_15.part2 == 410
 
 
+def test_16():
+    import solve_16
+    from solve_16 import phase
+
+    assert phase("80871224585914546619083218645595", times=100)[:8] == "24176176"
+    assert solve_16.part1 == "17978331"
+    assert solve_16.part2 == "19422575"
+
+
 def test_22():
     import solve_22
 
