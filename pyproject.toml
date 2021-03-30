@@ -11,6 +11,7 @@ advent-of-code-data = "^0.9.8"
 [tool.poetry.dev-dependencies]
 flake8-black = "^0.2.1"
 pytest = "^6.2.2"
+rich = "^10.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
