@@ -1,5 +1,4 @@
 import aocd
-from rich import print
 
 data = aocd.data
 data = data.split("\n\n")
