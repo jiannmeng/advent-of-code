@@ -6,7 +6,7 @@ authors = ["Tan Jiann Meng <jiannmeng@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-advent-of-code-data = "^0.9.8"
+advent-of-code-data = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 flake8-black = "^0.2.1"
