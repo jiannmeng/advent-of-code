@@ -5,7 +5,7 @@ description = "My attempt to solve Advent of Code programming puzzles."
 authors = ["Tan Jiann Meng <jiannmeng@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "~3.9"
 advent-of-code-data = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
